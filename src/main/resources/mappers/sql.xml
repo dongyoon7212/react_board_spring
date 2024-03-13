@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.reactboard.reactboard.repository.BoardRepository">
+
+    <!--  //////////////////////////////[ MAP ]////////////////////////////////  -->
+    <resultMap id="BoardResultMap" type="com.reactboard.reactboard.entity.Board">
+        <id property="boardId" column="board_id" />
+        <result property="boardTitle" column="board_title" />
+        <result property="boardContent" column="board_content" />
+        <result property="createDate" column="create_date" />
+    </resultMap>
+
+    <!--  //////////////////////////////[ SQL ]////////////////////////////////  -->
+    <insert
+            id="insertBoard"
+            parameterType="com.reactboard.reactboard.entity.Board"
+
+            useGeneratedKeys="true"
+            keyProperty="boardId"
+    > <!--parameterType 매개변수로 받을거, keyProperty 해당 변수에 generatedKeys값을 넣어줌 -->
+        insert into board_tb
+        values (0, #{boardTitle}, #{boardContent}, now())
+        <selectKey keyColumn="create_date" keyProperty="createDate" order="AFTER" resultType="java.time.LocalDateTime">
+            select
+                create_date
+            from
+                board_tb
+            order by
+                create_date
+            desc
+                LIMIT 1;
+        </selectKey>
+    </insert>
+    <select id="selectBoardAll" resultMap="BoardResultMap">
+            select
+                *
+            from
+                board_tb
+    </select>
+</mapper>
