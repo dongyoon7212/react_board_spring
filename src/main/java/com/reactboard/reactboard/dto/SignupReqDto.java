@@ -1,6 +1,8 @@
 package com.reactboard.reactboard.dto;
 
+import com.reactboard.reactboard.entity.User;
 import lombok.Data;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -17,4 +19,13 @@ public class SignupReqDto {
     @NotBlank
     @Email
     private String email;
+
+    public User toEntity(BCryptPasswordEncoder passwordEncoder) {
+        return User.builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .name(name)
+                .email(email)
+                .build();
+    }
 }
