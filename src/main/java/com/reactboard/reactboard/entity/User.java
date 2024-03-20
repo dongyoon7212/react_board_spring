@@ -1,5 +1,6 @@
 package com.reactboard.reactboard.entity;
 
+import com.reactboard.reactboard.security.PrincipalUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,5 +31,15 @@ public class User {
                 .map(roleRegister ->
                         new SimpleGrantedAuthority(roleRegister.getRole().getRoleName()))
                 .collect(Collectors.toList());
+    }
+
+    public PrincipalUser toPrincipalUser() {
+        return PrincipalUser.builder()
+                .userId(UserId)
+                .username(username)
+                .name(name)
+                .email(email)
+                .authorities(getAuthorities())
+                .build();
     }
 }
