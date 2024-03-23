@@ -27,19 +27,21 @@ public class JwtAuthenticationFilter extends GenericFilter {
         Boolean isPermitAll = (Boolean) request.getAttribute("isPermitAll");
 
         if(!isPermitAll) {
-            String accessToken = request.getHeader("Authorization");
-            String removeBearerToken = jwtProvider.removeBearer(accessToken);
-            Claims claims = jwtProvider.getClaims(removeBearerToken);
+            String accessToken = request.getHeader("Authorization"); // 헤더에 있는 accessToken
+            String removedBearerToken = jwtProvider.removeBearer(accessToken);
+            Claims claims = null;
 
-            if(claims == null) {
-                response.sendError(HttpStatus.UNAUTHORIZED.value());
+            try {
+                claims = jwtProvider.getClaims(removedBearerToken);
+            } catch (Exception e) {
+                response.sendError(HttpStatus.UNAUTHORIZED.value()); // 401에러 인증실패
                 return;
             }
 
             Authentication authentication = jwtProvider.getAuthentication(claims);
 
             if(authentication == null) {
-                response.sendError(HttpStatus.UNAUTHORIZED.value());
+                response.sendError(HttpStatus.UNAUTHORIZED.value()); // 401에러 인증실패
                 return;
             }
 
